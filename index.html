@@ -122,8 +122,6 @@
       transition: all 0.9s ease;
     }
 
-    /* TARJETA CERRADA */
-
     .card-front {
       display: flex;
       align-items: center;
@@ -204,8 +202,6 @@
       filter: brightness(1.02);
     }
 
-    /* TARJETA ABIERTA */
-
     .card-inside {
       position: absolute;
       inset: 0;
@@ -251,11 +247,13 @@
 
     .nicole-photo {
       width: 100%;
-      height: 330px;
-      object-fit: cover;
-      object-position: center 35%;
+      height: auto;
+      max-height: 430px;
+      object-fit: contain;
+      object-position: center;
       display: block;
       border-radius: 20px;
+      background: rgba(255, 255, 255, 0.45);
     }
 
     .photo-caption {
@@ -367,8 +365,6 @@
       line-height: 1.6;
     }
 
-    /* ESTADO ABIERTO */
-
     .invitation-card.open .card-front {
       transform: rotateY(-105deg);
       opacity: 0.12;
@@ -380,8 +376,6 @@
       transform: scale(1);
       z-index: 3;
     }
-
-    /* SCROLLBAR */
 
     .card-inside::-webkit-scrollbar {
       width: 8px;
@@ -395,8 +389,6 @@
     .card-inside::-webkit-scrollbar-track {
       background: transparent;
     }
-
-    /* RESPONSIVE */
 
     @media (max-width: 860px) {
       .page {
@@ -428,7 +420,8 @@
       }
 
       .nicole-photo {
-        height: 300px;
+        height: auto;
+        max-height: 400px;
       }
 
       .snoopy-small-card {
@@ -468,7 +461,8 @@
       }
 
       .nicole-photo {
-        height: 280px;
+        height: auto;
+        max-height: 380px;
       }
 
       .photo-caption {
@@ -598,8 +592,6 @@
 
       startConfetti();
     });
-
-    /* CONFETI CON FADE OUT */
 
     const canvas = document.getElementById("confetti-canvas");
     const ctx = canvas.getContext("2d");
