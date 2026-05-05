@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Invitación de cumpleaños - Nicole</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg1: #f8f3ee;
+      --bg2: #efe3da;
+      --bg3: #eadedf;
+      --text: #4d433d;
+      --soft-text: #746861;
+      --white: rgba(255, 255, 255, 0.58);
+      --border: rgba(255, 255, 255, 0.42);
+      --shadow: 0 15px 45px rgba(110, 90, 75, 0.12);
+      --accent: #d9b08c;
+      --accent2: #d8c59a;
+      --accent3: #d8a8b5;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2), var(--bg3));
+      color: var(--text);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bg-shape {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(22px);
+      opacity: 0.42;
+      z-index: 0;
+    }
+
+    .shape1 {
+      width: 220px;
+      height: 220px;
+      background: #e7d3c4;
+      top: 5%;
+      left: 5%;
+    }
+
+    .shape2 {
+      width: 280px;
+      height: 280px;
+      background: #e4cfd6;
+      bottom: 8%;
+      right: 5%;
+    }
+
+    .shape3 {
+      width: 170px;
+      height: 170px;
+      background: #e8e0c8;
+      bottom: 15%;
+      left: 15%;
+    }
+
+    .invitation-wrapper {
+      width: 100%;
+      max-width: 980px;
+      display: flex;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .invitation-card {
+      width: 100%;
+      max-width: 920px;
+      min-height: 620px;
+      position: relative;
+      perspective: 1600px;
+    }
+
+    .card-face {
+      width: 100%;
+      min-height: 620px;
+      border-radius: 30px;
+      background: var(--white);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      transition: all 0.9s ease;
+    }
+
+    /* TARJETA CERRADA */
+
+    .card-front {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+      position: relative;
+      z-index: 2;
+      transform-origin: left center;
+      overflow: hidden;
+    }
+
+    .front-content {
+      text-align: center;
+      max-width: 460px;
+    }
+
+    .front-badge {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.68);
+      border: 1px solid rgba(255, 255, 255, 0.58);
+      font-size: 0.9rem;
+      color: var(--soft-text);
+      margin-bottom: 18px;
+    }
+
+    .front-image-wrap {
+      width: 210px;
+      height: 210px;
+      margin: 0 auto 20px;
+      background: rgba(255, 255, 255, 0.55);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .front-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .card-front h1 {
+      font-family: "Patrick Hand", cursive;
+      font-size: 3rem;
+      line-height: 1.1;
+      margin-bottom: 12px;
+      color: #514640;
+    }
+
+    .front-subtitle {
+      color: var(--soft-text);
+      font-size: 1.05rem;
+      margin-bottom: 24px;
+    }
+
+    .open-btn {
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent3));
+      color: white;
+      padding: 14px 26px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(120, 95, 95, 0.14);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+    }
+
+    .open-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px rgba(120, 95, 95, 0.16);
+      filter: brightness(1.02);
+    }
+
+    /* TARJETA ABIERTA */
+
+    .card-inside {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-columns: 0.9fr 1.2fr;
+      opacity: 0;
+      transform: scale(0.96);
+      z-index: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .inside-left {
+      background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.42),
+        rgba(255, 255, 255, 0.20)
+      );
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+    }
+
+    .photo-area {
+      width: 100%;
+      max-width: 330px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .nicole-photo-card {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      border-radius: 26px;
+      padding: 12px 12px 18px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+      transform: rotate(-1.5deg);
+    }
+
+    .nicole-photo {
+      width: 100%;
+      height: 330px;
+      object-fit: cover;
+      object-position: center 35%;
+      display: block;
+      border-radius: 20px;
+    }
+
+    .photo-caption {
+      font-family: "Patrick Hand", cursive;
+      font-size: 1.45rem;
+      color: #5b4d45;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .snoopy-small-card {
+      width: 150px;
+      height: 150px;
+      background: rgba(255, 255, 255, 0.58);
+      border-radius: 24px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.045);
+      transform: rotate(2deg);
+    }
+
+    .inside-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .inside-right {
+      padding: 38px 34px 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    .tag {
+      display: inline-block;
+      width: fit-content;
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.68);
+      color: var(--soft-text);
+      font-size: 0.85rem;
+      margin-bottom: 14px;
+    }
+
+    .inside-right h2 {
+      font-family: "Patrick Hand", cursive;
+      font-size: 2.5rem;
+      margin-bottom: 16px;
+      line-height: 1.1;
+      color: #514640;
+    }
+
+    .message {
+      color: var(--soft-text);
+      line-height: 1.7;
+      margin-bottom: 20px;
+      font-size: 0.98rem;
+    }
+
+    .info-box,
+    .quote-box {
+      background: rgba(255, 255, 255, 0.50);
+      border: 1px solid rgba(255, 255, 255, 0.44);
+      border-radius: 22px;
+      padding: 18px 20px;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.045);
+    }
+
+    .info-box {
+      margin-bottom: 18px;
+    }
+
+    .info-box p {
+      margin-bottom: 10px;
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    .info-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .quote-box {
+      text-align: center;
+    }
+
+    .quote-text {
+      font-family: "Patrick Hand", cursive;
+      font-size: 1.65rem;
+      line-height: 1.35;
+      color: #5b4d45;
+      margin-bottom: 8px;
+    }
+
+    .quote-author {
+      font-size: 0.95rem;
+      color: var(--soft-text);
+      font-weight: 500;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      color: var(--soft-text);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* ESTADO ABIERTO */
+
+    .invitation-card.open .card-front {
+      transform: rotateY(-105deg);
+      opacity: 0.12;
+      pointer-events: none;
+    }
+
+    .invitation-card.open .card-inside {
+      opacity: 1;
+      transform: scale(1);
+      z-index: 3;
+    }
+
+    /* SCROLLBAR */
+
+    .card-inside::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .card-inside::-webkit-scrollbar-thumb {
+      background: rgba(160, 130, 110, 0.30);
+      border-radius: 999px;
+    }
+
+    .card-inside::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 860px) {
+      .page {
+        align-items: flex-start;
+        padding: 24px 14px;
+      }
+
+      .invitation-card {
+        min-height: auto;
+      }
+
+      .card-front {
+        min-height: 560px;
+      }
+
+      .card-inside {
+        grid-template-columns: 1fr;
+        position: relative;
+        inset: unset;
+        max-height: none;
+      }
+
+      .inside-left {
+        padding: 24px 24px 10px;
+      }
+
+      .photo-area {
+        max-width: 290px;
+      }
+
+      .nicole-photo {
+        height: 300px;
+      }
+
+      .snoopy-small-card {
+        width: 130px;
+        height: 130px;
+      }
+
+      .inside-right {
+        padding: 18px 22px 28px;
+      }
+
+      .invitation-card.open .card-front {
+        display: none;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .card-front h1 {
+        font-size: 2.3rem;
+      }
+
+      .inside-right h2 {
+        font-size: 2rem;
+      }
+
+      .quote-text {
+        font-size: 1.35rem;
+      }
+
+      .front-image-wrap {
+        width: 170px;
+        height: 170px;
+      }
+
+      .inside-right {
+        padding: 18px 18px 26px;
+      }
+
+      .nicole-photo {
+        height: 280px;
+      }
+
+      .photo-caption {
+        font-size: 1.25rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="confetti-canvas"></canvas>
+
+  <audio id="partyAudio" src="audio/fiesta.mp3"></audio>
+
+  <main class="page">
+    <div class="bg-shape shape1"></div>
+    <div class="bg-shape shape2"></div>
+    <div class="bg-shape shape3"></div>
+
+    <section class="invitation-wrapper">
+      <div class="invitation-card" id="invitationCard">
+
+        <!-- PORTADA -->
+        <div class="card-face card-front" id="openCard">
+          <div class="front-content">
+            <div class="front-badge">Invitación especial</div>
+
+            <div class="front-image-wrap">
+              <img src="IMG/snoopy_1.png" alt="Snoopy portada" class="front-image">
+            </div>
+
+            <h1>Invitación de cumpleaños</h1>
+            <p class="front-subtitle">Haz clic para abrir la invitación</p>
+
+            <button class="open-btn">Abrir invitación</button>
+          </div>
+        </div>
+
+        <!-- INTERIOR -->
+        <div class="card-face card-inside">
+          <div class="inside-left">
+            <div class="photo-area">
+
+              <div class="nicole-photo-card">
+                <img src="IMG/nicole.jpg" alt="Foto de Nicole" class="nicole-photo">
+                <p class="photo-caption">Nicole Zúñiga</p>
+              </div>
+
+              <div class="snoopy-small-card">
+                <img src="IMG/snoopy_2.png" alt="Snoopy decoración" class="inside-image">
+              </div>
+
+            </div>
+          </div>
+
+          <div class="inside-right">
+            <span class="tag">Celebración especial</span>
+
+            <h2>¡Celebremos a Nicole!</h2>
+
+            <p class="message">
+              Hay días que merecen celebrarse con alegría, cariño y momentos inolvidables.
+              Queremos compartir contigo una fecha muy especial para festejar los 23 años de Nicole
+              y disfrutar juntos de un momento bonito.
+            </p>
+
+            <div class="info-box">
+              <p><strong>Celebramos a:</strong> Nicole Zúñiga</p>
+              <p><strong>Motivo:</strong> Cumpleaños #23</p>
+              <p><strong>Fecha:</strong> 17 de mayo</p>
+              <p><strong>Hora:</strong> 12:00 m. d.</p>
+              <p><strong>Ubicación:</strong> Secreta</p>
+              <p><strong>Importante:</strong> La ubicación se confirmará un día antes del evento.</p>
+            </div>
+
+            <div class="quote-box">
+              <p class="quote-text" id="snoopyQuote">
+                “Hoy es un gran día para ser feliz y celebrar.”
+              </p>
+              <p class="quote-author">— Snoopy</p>
+            </div>
+
+            <p class="footer-note">
+              Ven con buena energía, muchas ganas de celebrar y prepárate para pasar un día muy bonito.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const invitationCard = document.getElementById("invitationCard");
+    const openCard = document.getElementById("openCard");
+    const partyAudio = document.getElementById("partyAudio");
+    const snoopyQuote = document.getElementById("snoopyQuote");
+
+    const quotes = [
+      "La vida es mejor con amigos, risas y pastel.",
+      "Los días felices se celebran en grande.",
+      "No hay mejor plan que compartir alegría.",
+      "Un cumpleaños feliz comienza con personas especiales.",
+      "La felicidad está en los pequeños momentos… y en una buena fiesta.",
+      "Celebra, sonríe y disfruta cada instante.",
+      "Las mejores fiestas están llenas de cariño, risas y dulces recuerdos.",
+      "Hoy es un gran día para ser feliz y celebrar."
+    ];
+
+    function getRandomQuote() {
+      const randomIndex = Math.floor(Math.random() * quotes.length);
+      return quotes[randomIndex];
+    }
+
+    openCard.addEventListener("click", async () => {
+      invitationCard.classList.add("open");
+
+      const selectedQuote = getRandomQuote();
+      snoopyQuote.textContent = `“${selectedQuote}”`;
+
+      try {
+        partyAudio.currentTime = 0;
+        await partyAudio.play();
+      } catch (error) {
+        console.log("El navegador bloqueó el audio:", error);
+      }
+
+      startConfetti();
+    });
+
+    /* CONFETI CON FADE OUT */
+
+    const canvas = document.getElementById("confetti-canvas");
+    const ctx = canvas.getContext("2d");
+
+    let confettiPieces = [];
+    let animationId;
+    let confettiRunning = false;
+    let confettiFading = false;
+    let confettiOpacity = 1;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    function createConfettiPiece() {
+      const colors = [
+        "#d8a8b5",
+        "#d6c08f",
+        "#a9cfd6",
+        "#bdd8cf",
+        "#d8b29b",
+        "#c7b7d8",
+        "#e0c1b5"
+      ];
+
+      return {
+        x: Math.random() * canvas.width,
+        y: Math.random() * -canvas.height,
+        w: Math.random() * 9 + 5,
+        h: Math.random() * 12 + 7,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        speed: Math.random() * 2.2 + 1.6,
+        drift: Math.random() * 0.8 + 0.4,
+        angle: Math.random() * Math.PI * 2,
+        rotation: Math.random() * 0.08 - 0.04
+      };
+    }
+
+    function initConfetti(amount = 160) {
+      confettiPieces = [];
+
+      for (let i = 0; i < amount; i++) {
+        confettiPieces.push(createConfettiPiece());
+      }
+    }
+
+    function drawConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.globalAlpha = confettiOpacity;
+
+      confettiPieces.forEach((piece) => {
+        ctx.save();
+        ctx.translate(piece.x, piece.y);
+        ctx.rotate(piece.angle);
+        ctx.fillStyle = piece.color;
+        ctx.fillRect(-piece.w / 2, -piece.h / 2, piece.w, piece.h);
+        ctx.restore();
+      });
+
+      ctx.globalAlpha = 1;
+
+      updateConfetti();
+
+      if (confettiFading) {
+        confettiOpacity -= 0.012;
+
+        if (confettiOpacity <= 0) {
+          confettiOpacity = 0;
+          finishConfetti();
+          return;
+        }
+      }
+
+      if (confettiRunning) {
+        animationId = requestAnimationFrame(drawConfetti);
+      }
+    }
+
+    function updateConfetti() {
+      confettiPieces.forEach((piece) => {
+        piece.y += piece.speed;
+        piece.x += Math.sin(piece.y * 0.02) * piece.drift;
+        piece.angle += piece.rotation;
+
+        if (!confettiFading && piece.y > canvas.height + 30) {
+          piece.y = -20;
+          piece.x = Math.random() * canvas.width;
+        }
+      });
+
+      if (confettiFading) {
+        confettiPieces = confettiPieces.filter(piece => piece.y < canvas.height + 40);
+      }
+    }
+
+    function startConfetti() {
+      if (confettiRunning) return;
+
+      confettiRunning = true;
+      confettiFading = false;
+      confettiOpacity = 1;
+
+      initConfetti();
+      drawConfetti();
+
+      setTimeout(() => {
+        fadeOutConfetti();
+      }, 7000);
+    }
+
+    function fadeOutConfetti() {
+      confettiFading = true;
+    }
+
+    function finishConfetti() {
+      confettiRunning = false;
+      confettiFading = false;
+      cancelAnimationFrame(animationId);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  </script>
+</body>
+</html>
